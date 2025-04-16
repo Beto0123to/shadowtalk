@@ -181,6 +181,21 @@ if ('serviceWorker' in navigator) {
             })
             .catch(error => {
                 console.log('Falha no registro do ServiceWorker:', error);
-            });
-    });
-}
+            
+// Controle do Botão de Chat
+document.getElementById('start-chat').addEventListener('click', function() {
+  // Simula conexão com um bot
+  const botResponse = [
+    "Olá! Sou o Bot Amigável 🤖",
+    "Como posso te ajudar hoje?",
+    "O anonimato é libertador, não acha?"
+  ][Math.floor(Math.random() * 3)];
+  
+  const chatBox = document.getElementById('chat-messages');
+  chatBox.innerHTML += `<div class="bot-msg">${botResponse}</div>`;
+});
+
+// Controle do Login (se necessário)
+document.getElementById('google-login')?.addEventListener('click', function() {
+  alert("Login com Google será implementado aqui!");
+});
