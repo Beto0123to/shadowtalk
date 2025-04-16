@@ -1,1 +1,53 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShadowTalk - Chat Anônimo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>ShadowTalk</h1>
+        <div id="auth-status"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <section id="chat-section" class="hidden">
+            <div class="chat-header">
+                <div id="current-partner"></div>
+                <button id="new-chat">🔀 Novo Chat</button>
+            </div>
+            <div id="chat-messages"></div>
+            <div class="message-input">
+                <input type="text" id="message-input" placeholder="Digite sua mensagem...">
+                <button id="send-button">Enviar</button>
+            </div>
+        </section>
+
+        <section id="login-section">
+            <h2>Converse Anonimamente</h2>
+            <button id="start-chat">Iniciar Chat Anônimo</button>
+            <div class="social-login">
+                <button id="google-login">Entrar com Google</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>ShadowTalk © 2023 - Todos os direitos reservados</p>
+    </footer>
+
+    <script src="firebase.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
