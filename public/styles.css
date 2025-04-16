@@ -1,0 +1,26 @@
+/* Estilos dos botões */
+.chat-button {
+  background: #6e00ff;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.login-button {
+  background: #4285F4;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  margin-left: 10px;
+}
+
+/* Efeito hover */
+.chat-button:hover {
+  background: #5a00d1;
+  transform: translateY(-2px);
+}
