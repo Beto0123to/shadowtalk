@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShadowTalk - Clone do RandoChat</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #9b59b6;
+      margin-top: 30px;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #ccc;
+    }
+
+    button {
+      margin-top: 20px;
+      background-color: #9b59b6;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #chat {
+      display: none;
+      width: 90vw;
+      max-width: 600px;
+      height: 70vh;
+      margin-top: 30px;
+      border: 1px solid #555;
+      background-color: #222;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #mensagens {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    #input-area {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #444;
+    }
+
+    #mensagem {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    #enviar {
+      margin-left: 10px;
+      background-color: #2980b9;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+
+  <!-- Firebase Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_DOMINIO.firebaseapp.com",
+      databaseURL: "https://SEU_DOMINIO.firebaseio.com",
+      projectId: "SEU_PROJETO_ID",
+      storageBucket: "SEU_BUCKET.appspot.com",
+      messagingSenderId: "SEU_SENDER_ID",
+      appId: "SEU_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let userId = "user_" + Math.random().toString(36).substring(2);
+    let chatId = null;
+
+    async function procurarPessoa() {
+      document.getElementById('status').innerText = 'Procurando alguém...';
+      await db.ref('fila/' + userId).set(true);
+
+      db.ref('fila').once('value', snapshot => {
+        const fila = snapshot.val();
+        const chaves = Object.keys(fila || {});
+
+        for (let i = 0; i < chaves.length; i++) {
+          const outroId = chaves[i];
+          if (outroId !== userId) {
+            chatId = userId + '_' + outroId;
+            db.ref('chats/' + chatId + '/mensagens').set({});
+            db.ref('usuarios/' + userId).set({ chatId });
+            db.ref('usuarios/' + outroId).set({ chatId });
+            db.ref('fila/' + userId).remove();
+            db.ref('fila/' + outroId).remove();
+            abrirChat(chatId);
+            return;
+          }
+        }
+
+        escutarEmparelhamento();
+      });
+    }
+
+    function escutarEmparelhamento() {
+      db.ref('usuarios/' + userId).on('value', snapshot => {
+        const data = snapshot.val();
+        if (data && data.chatId) {
+          abrirChat(data.chatId);
+        }
+      });
+    }
+
+    function abrirChat(chatId) {
+      document.getElementById('status').innerText = 'Conectado!';
+      document.getElementById('chat').style.display = 'flex';
+      const mensagensRef = db.ref('chats/' + chatId + '/mensagens');
+
+      mensagensRef.on('value', snapshot => {
+        const mensagens = snapshot.val();
+        const container = document.getElementById('mensagens');
+        container.innerHTML = '';
+        for (let id in mensagens) {
+          const msg = mensagens[id];
+          container.innerHTML += `<p><b>${msg.user}:</b> ${msg.texto}</p>`;
+          container.scrollTop = container.scrollHeight;
+        }
+      });
+    }
+
+    function enviarMensagem() {
+      const texto = document.getElementById('mensagem').value;
+      if (!texto || !chatId) return;
+      const novaMsg = db.ref('chats/' + chatId + '/mensagens').push();
+      novaMsg.set({ user: userId, texto });
+      document.getElementById('mensagem').value = '';
+    }
+  </script>
+</head>
+<body>
+  <h1>ShadowTalk</h1>
+  <p id="status">Clique no botão abaixo para procurar alguém</p>
+  <button onclick="procurarPessoa()">Procurar Pessoa</button>
+
+  <div id="chat">
+    <div id="mensagens"></div>
+    <div id="input-area">
+      <input type="text" id="mensagem" placeholder="Digite sua mensagem...">
+      <button id="enviar" onclick="enviarMensagem()">Enviar</button>
+    </div>
+  </div>
+</body>
+</html>
