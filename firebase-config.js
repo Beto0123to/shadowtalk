@@ -10,5 +10,5 @@ const firebaseConfig = {
   measurementId: "G-TBKNJ5MSE4",
   databaseURL: "https://shadowtalk-bf8e5-default-rtdb.firebaseio.com"
 };
-
 firebase.initializeApp(firebaseConfig);
+https://console.firebase.google.com/u/0/project/shadowtalk-bf8e5/database/shadowtalk-bf8e5-default-rtdb/data/~2F
